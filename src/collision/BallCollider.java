@@ -5,13 +5,33 @@ import java.lang.Math;
 
 public class BallCollider
 {
-	private static Point2D getRelativeClosestPoint(Ball ball1, Ball ball2)
+	private Ball ball1, ball2;
+	private double vxRel, vyRel;
+	private int collisionType;
+	private Point2D[] vels;
+	
+	public BallCollider(Ball ball1, Ball ball2)
 	{
-		double solX, solY;
+		double d = Math.sqrt(Math.pow(ball1.x - ball2.x, 2) + Math.pow(ball1.y - ball2.y, 2));
+		if (d < ball1.getRadius() + ball2.getRadius())
+			throw new IllegalArgumentException("Invalid initial position");
+		
+		this.ball1 = ball1;
+		this.ball2 = ball2;
 		
 		//2nd relative to the 1st
-		double vxRel = ball2.vx - ball1.vx;
-		double vyRel = ball2.vy - ball1.vy;
+		vxRel = ball2.vx - ball1.vx;
+		vyRel = ball2.vy - ball1.vy;
+		
+		collisionType = checkCollision();
+		
+		if (collisionType >= 0)
+			vels = getVelocities();
+	}
+	
+	private Point2D getRelativeClosestPoint()
+	{
+		double solX, solY;
 		
 		//if moving away from ball - already closest
 		if ((ball1.x - ball2.x) * vxRel + (ball1.y - ball2.y) * vyRel <= 0)
@@ -49,34 +69,13 @@ public class BallCollider
 		return new Point2D.Double(solX, solY);
 	}
 	
-	public static Point2D[] getClosestPoint(Ball ball1, Ball ball2)
-	{
-		Point2D[] points = new Point2D[2];
-		
-		//2nd relative to the 1st
-		double vxRel = ball2.vx - ball1.vx;
-		double vyRel = ball2.vy - ball1.vy;
-		
-		Point2D relPoint = getRelativeClosestPoint(ball1, ball2);
-		
-		double t = Math.sqrt(Math.pow(relPoint.getX() - ball2.x, 2) + Math.pow(relPoint.getY() - ball2.y, 2)) / 
-					Math.sqrt(Math.pow(vxRel, 2) + Math.pow(vyRel, 2));
-		
-		points[0] = new Point2D.Double(ball1.x + ball1.vx * t, ball1.y + ball1.vy * t);
-		points[1] = new Point2D.Double(ball2.x + ball2.vx * t, ball2.y + ball2.vy * t);
-		
-		return points;
-		
-
-	}
-	
-	public static int checkCollision(Ball ball1, Ball ball2)
+	private int checkCollision()
 	{
 		//-1 - no collision, 0 - central collision, 1 - non-central collision
 		
 		double eps = 0.0001;
 		double criticalDistance = ball1.getRadius() + ball2.getRadius();
-		Point2D relPoint = getRelativeClosestPoint(ball1, ball2);
+		Point2D relPoint = getRelativeClosestPoint();
 		
 		double minDistance = relPoint.distance(ball1.x, ball1.y);
 		
@@ -89,18 +88,15 @@ public class BallCollider
 			return -1;
 	}
 	
-	private static Point2D getRelativeCollisionPoint(Ball ball1, Ball ball2)
+	private Point2D getRelativeCollisionPoint()
 	{
-		if (checkCollision(ball1, ball2) < 0)
+		if (checkCollision() < 0)
 		{
 			System.out.println("Error: no collision");
+			return null;
 		}
 		
-		//2nd relative to the 1st
-		double vxRel = ball2.vx - ball1.vx;
-		double vyRel = ball2.vy - ball1.vy;
-		
-		Point2D relPoint = getRelativeClosestPoint(ball1, ball2);
+		Point2D relPoint = getRelativeClosestPoint();
 		
 		double h = Math.sqrt(Math.pow(ball1.getRadius() + ball2.getRadius(), 2) - 
 				Math.pow(relPoint.distance(ball1.x, ball2.y), 2));
@@ -113,14 +109,10 @@ public class BallCollider
 		return new Point2D.Double(colX, colY);
 	}
 	
-	public static Point2D[] getVelocities(Ball ball1, Ball ball2)
+	private Point2D[] getVelocities()
 	{
-		Point2D colPoint = getRelativeCollisionPoint(ball1, ball2);
+		Point2D colPoint = getRelativeCollisionPoint();
 		Point2D[] vels = new Point2D[2];
-		
-		//2nd relative to the 1st
-		double vxRel = ball2.vx - ball1.vx;
-		double vyRel = ball2.vy - ball1.vy;
 		
 		double h = Math.sqrt(Math.pow(colPoint.getX() - ball1.x, 2) + 
 				Math.pow(colPoint.getY() - ball1.y, 2));
@@ -147,5 +139,58 @@ public class BallCollider
 		vels[1] = new Point2D.Double(Vx2 + ball1.vx, Vy2 + ball1.vy);
 		
 		return vels;
+	}
+	
+	public String getCollisionType()
+	{
+		switch(collisionType)
+		{
+			case -1:
+				return "No collision";
+			case 0:
+				return "Central collision";
+			default:
+				return "Non-central collision";
+		}
+	}
+	
+	public double getBall1VelocityX()
+	{
+		if (collisionType < 0)
+		{
+			System.out.println("No collision");
+			return ball1.vx;
+		}
+		return vels[0].getX();
+	}
+	
+	public double getBall1VelocityY()
+	{
+		if (collisionType < 0)
+		{
+			System.out.println("No collision");
+			return ball1.vy;
+		}
+		return vels[0].getY();
+	}
+	
+	public double getBall2VelocityX()
+	{
+		if (collisionType < 0)
+		{
+			System.out.println("No collision");
+			return ball2.vx;
+		}
+		return vels[1].getX();
+	}
+	
+	public double getBall2VelocityY()
+	{
+		if (collisionType < 0)
+		{
+			System.out.println("No collision");
+			return ball2.vy;
+		}
+		return vels[1].getY();
 	}
 }
