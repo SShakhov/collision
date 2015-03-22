@@ -8,25 +8,32 @@ public class Main
 	public static void main(String[] args)
 	{
 		Ball[] balls = new Ball[2];
+		BufferedReader br = null;
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader("src/collision/input.txt"));
-			for(int i = 0; i < 2; i++)
+			br = new BufferedReader(new FileReader("src/collision/input.txt"));
+			
+			try
 			{
-				String line = br.readLine();
-				Scanner s = new Scanner(line);
-				double x = s.nextDouble();
-				double y = s.nextDouble();
-				double vx = s.nextDouble();
-				double vy = s.nextDouble();
-				double m = s.nextDouble();
-				double r = s.nextDouble();
+				for(int i = 0; i < 2; i++)
+				{
+					String line = br.readLine();
+					Scanner s = new Scanner(line);
+					double x = s.nextDouble();
+					double y = s.nextDouble();
+					double vx = s.nextDouble();
+					double vy = s.nextDouble();
+					double m = s.nextDouble();
+					double r = s.nextDouble();
+					s.close();
 				
-				balls[i] = new Ball(x, y, vx, vy, m, r);
-				
-				s.close();
+					balls[i] = new Ball(x, y, vx, vy, m, r);
+				}
 			}
-			br.close();
+			finally
+			{
+				br.close();
+			}
 			
 			BallCollider bc = new BallCollider(balls[0], balls[1]);
 
@@ -39,11 +46,10 @@ public class Main
 		catch(FileNotFoundException e)
 		{
 			System.out.println(e);
-			return;
 		}
 		catch(IOException e)
 		{
-			
+			System.out.println(e);
 		}
 		
 		catch(IllegalArgumentException e)
