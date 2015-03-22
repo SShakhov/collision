@@ -7,6 +7,7 @@ public class Ball
 	private double m, r;
 	
 	public Ball(double x, double y, double vx, double vy, double m, double r)
+			//throws IllegalArgumentException
 	{
 		this.x = x;
 		this.y = y;
@@ -19,7 +20,7 @@ public class Ball
 	public void setMass(double m)
 	{
 		if (m <= 0)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Mass must be positive");
 		else
 			this.m = m;
 	}
@@ -27,7 +28,7 @@ public class Ball
 	public void setRadius(double r)
 	{
 		if (r <= 0)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Radius must be positive");
 		else
 			this.r = r;
 	}
