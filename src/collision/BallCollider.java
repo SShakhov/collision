@@ -158,7 +158,6 @@ public class BallCollider
 	{
 		if (collisionType < 0)
 		{
-			System.out.println("No collision");
 			return ball1.vx;
 		}
 		return vels[0].getX();
@@ -168,7 +167,6 @@ public class BallCollider
 	{
 		if (collisionType < 0)
 		{
-			System.out.println("No collision");
 			return ball1.vy;
 		}
 		return vels[0].getY();
@@ -178,7 +176,6 @@ public class BallCollider
 	{
 		if (collisionType < 0)
 		{
-			System.out.println("No collision");
 			return ball2.vx;
 		}
 		return vels[1].getX();
@@ -188,7 +185,6 @@ public class BallCollider
 	{
 		if (collisionType < 0)
 		{
-			System.out.println("No collision");
 			return ball2.vy;
 		}
 		return vels[1].getY();
