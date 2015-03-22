@@ -89,13 +89,7 @@ public class BallCollider
 	}
 	
 	private Point2D getRelativeCollisionPoint()
-	{
-		if (checkCollision() < 0)
-		{
-			System.out.println("Error: no collision");
-			return null;
-		}
-		
+	{	
 		Point2D relPoint = getRelativeClosestPoint();
 		
 		double h = Math.sqrt(Math.pow(ball1.getRadius() + ball2.getRadius(), 2) - 
